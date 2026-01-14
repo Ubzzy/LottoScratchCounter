@@ -10,42 +10,65 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
-            body { margin: 0; padding: 0; }
+            @page {
+                margin: 0.5in;
+            }
+            body { 
+                margin: 0; 
+                padding: 0; 
+            }
             .no-print { display: none !important; }
+            .print-date { display: block !important; }
             .bg-gradient-to-br { background: white !important; }
             .shadow-xl { box-shadow: none !important; }
             .rounded-2xl { border-radius: 0 !important; }
             .print-summary { 
-                padding: 20px !important; 
+                padding: 10px !important; 
                 page-break-inside: avoid;
+                max-height: 100vh;
+            }
+            .print-date {
+                font-size: 11px !important;
+                margin-bottom: 8px !important;
+                color: #666 !important;
             }
             .print-summary h2 { 
-                font-size: 20px !important; 
-                margin-bottom: 12px !important;
+                font-size: 16px !important; 
+                margin-bottom: 8px !important;
+                margin-top: 0 !important;
+            }
+            .summary-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 6px !important;
+                margin-bottom: 10px !important;
             }
             .summary-item-print { 
-                padding: 8px 12px !important; 
-                margin: 6px 0 !important;
-                font-size: 14px !important;
+                padding: 6px 10px !important; 
+                margin: 0 !important;
+                font-size: 11px !important;
+                background: #f9fafb !important;
+                border: 1px solid #e5e7eb !important;
             }
             .summary-item-print .text-lg { 
-                font-size: 15px !important;
-            }
-            .summary-item-print .text-xl { 
-                font-size: 16px !important;
-            }
-            .summary-item-print .text-sm { 
                 font-size: 12px !important;
             }
+            .summary-item-print .text-xl { 
+                font-size: 13px !important;
+            }
+            .summary-item-print .text-sm { 
+                font-size: 10px !important;
+            }
             .grand-total-print { 
-                padding-top: 12px !important; 
-                margin-top: 12px !important;
+                padding-top: 10px !important; 
+                margin-top: 10px !important;
+                border-top: 2px solid #000 !important;
             }
             .grand-total-print .text-2xl { 
-                font-size: 18px !important;
+                font-size: 14px !important;
             }
             .grand-total-print .text-3xl { 
-                font-size: 22px !important;
+                font-size: 18px !important;
             }
         }
     </style>
@@ -147,6 +170,11 @@
             })).sort((a, b) => a.value - b.value);
 
             const grandTotal = totalsByValue.reduce((sum, item) => sum + item.total, 0);
+
+            const getCurrentDate = () => {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date().toLocaleDateString('en-US', options);
+            };
 
             const handlePrint = () => {
                 window.print();
@@ -250,6 +278,8 @@
 
                         {totalsByValue.length > 0 && (
                             <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 print-summary">
+                                <div className="print-date no-print" style={{display: 'none'}}></div>
+                                <div style={{display: 'none'}} className="print-date">{getCurrentDate()}</div>
                                 <div className="flex justify-between items-center mb-4">
                                     <h2 className="text-2xl font-bold text-gray-800">Summary</h2>
                                     <div className="flex gap-2 no-print">
@@ -269,7 +299,7 @@
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 mb-6">
+                                <div className="summary-grid">
                                     {totalsByValue.map((item) => (
                                         <div key={item.value} className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg summary-item-print">
                                             <div className="flex justify-between items-center">
